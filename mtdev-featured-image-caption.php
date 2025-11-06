@@ -2,12 +2,19 @@
 
 /**
  * Plugin Name: MTDev Featured Image Caption
+ * Plugin URI:  https://martatorre.dev
  * Description: Displays the caption of the featured image under the Featured Image block on single posts.
  * Version:     1.0.0
  * Author:      Marta Torre
  * Author URI:  https://martatorre.dev
+ * License:     GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: mtdev-featured-image-caption
+ * Requires at least: 6.0
+ * Tested up to: 6.7
+ * Requires PHP: 7.4
  */
+
 
 if (! defined('ABSPATH')) {
     exit;
@@ -57,7 +64,6 @@ function mtdev_featured_image_caption_render($block_content, $block)
         return $block_content;
     }
 
-    // Avoid adding a second caption if one already exists.
     if (false !== strpos($block_content, '<figcaption')) {
         return $block_content;
     }
@@ -70,7 +76,7 @@ function mtdev_featured_image_caption_render($block_content, $block)
         esc_html($caption)
     );
 
-    // If there is already a <figure>, inject aria-describedby and the caption.
+    // If there is already a figure, inject aria-describedby and the caption.
     if (false !== strpos($block_content, '<figure') && false !== strpos($block_content, '</figure>')) {
 
         if (false === strpos($block_content, 'aria-describedby=')) {
@@ -96,7 +102,7 @@ function mtdev_featured_image_caption_render($block_content, $block)
 add_filter('render_block', 'mtdev_featured_image_caption_render', 10, 2);
 
 /**
- * Basic frontend styles for the caption.
+ * Enqueue plugin stylesheet.
  */
 function mtdev_featured_image_caption_enqueue_styles()
 {
@@ -105,18 +111,11 @@ function mtdev_featured_image_caption_enqueue_styles()
         return;
     }
 
-    $css = '
-		.mtdev-featured-image-caption {
-			font-size: 0.8rem;
-			line-height: 1.4;
-			margin-top: 0.5rem;
-			color: var(--wp--preset--color--foreground, #111111);
-			opacity: 0.9;
-		}
-	';
-
-    wp_register_style('mtdev-featured-image-caption', false);
-    wp_enqueue_style('mtdev-featured-image-caption');
-    wp_add_inline_style('mtdev-featured-image-caption', $css);
+    wp_enqueue_style(
+        'mtdev-featured-image-caption',
+        plugin_dir_url(__FILE__) . 'assets/css/style.css',
+        array(),
+        '1.0.0'
+    );
 }
 add_action('wp_enqueue_scripts', 'mtdev_featured_image_caption_enqueue_styles');
